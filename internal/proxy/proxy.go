@@ -30,7 +30,7 @@ const fns = `
 `
 
 func AddPreviewFunctions(input []byte) ([]byte, error) {
-	return []byte(strings.Replace(string(input), "<script>", fmt.Sprintf("<script>%s", fns), 1)), nil
+	return []byte(strings.Replace(string(input), "<head>", fmt.Sprintf("<head><script>%s</script>", fns), 1)), nil
 }
 
 func ServeHTTP(w http.ResponseWriter, r *http.Request) {

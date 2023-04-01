@@ -47,7 +47,8 @@ func (s *Server) ComparePreviewWithId(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(os.Stderr, fmt.Sprintf("preview: %#v", preview))
-	var rawhtml = `<!doctype html>
+	var rawhtml = `
+<!doctype html>
 <html>
 
 <head>
@@ -57,11 +58,11 @@ func (s *Server) ComparePreviewWithId(w http.ResponseWriter, r *http.Request) {
 </head>
 
 <body>
-    <div class="grid grid-cols-2 gap-1 mx-full border-2 border-blue-100 w-1/2 mx-auto my-auto h-1/2 mt-20">
-		<div id="container-1" class="col-span-1 w-full border border-red-900 h-screen">
+    <div class="grid grid-cols-2 gap-1 mx-full border-2 w-full mx-auto my-auto h-screen">
+		<div id="container-1" class="col-span-1 w-full h-screen">
 			<iframe id="frame-id-1" src="https://preview-1-wpsr7vaf.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
 		</div>
-		<div id="container-1" class="col-span-1 w-full border border-red-900 h-screen">
+		<div id="container-1" class="col-span-1 w-full h-screen">
 			<iframe id="frame-id-1" src="https://preview-2-b6p5mwqe.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
 		</div>
 	</div>
