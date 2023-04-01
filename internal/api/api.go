@@ -13,14 +13,20 @@ const uuidRegex = "[a-fA-F0-9]{8}-?[a-fA-F0-9]{4}-?4[a-fA-F0-9]{3}-?[8|9|aA|bB][
 // Server is api server
 type Server struct {
 	Router *mux.Router
-	store  preview.Store
+	store  *preview.Store
 }
 
 // New returns new server
 func New() (*Server, error) {
 	router := mux.NewRouter()
+	store, err := preview.NewStore()
+	if err != nil {
+		return nil, err
+	}
+
 	server := &Server{
 		Router: router,
+		store:  store,
 	}
 
 	server.addRoutes()

@@ -10,7 +10,7 @@ type Store struct {
 	kvstore key_value.Store
 }
 
-func New() (*Store, error) {
+func NewStore() (*Store, error) {
 	store, err := key_value.Open("default")
 	if err != nil {
 		return nil, err
