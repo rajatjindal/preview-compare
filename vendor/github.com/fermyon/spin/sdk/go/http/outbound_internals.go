@@ -121,7 +121,6 @@ func toOutboundHeaders(hm http.Header) C.wasi_outbound_http_headers_t {
 
 		idx := 0
 		for k, v := range hm {
-			fmt.Printf("k: %s, v: %s\n", k, v)
 			ptr[idx].f0 = C.wasi_outbound_http_string_t{ptr: C.CString(k), len: C.size_t(len(k))}
 			ptr[idx].f1 = C.wasi_outbound_http_string_t{ptr: C.CString(v[0]), len: C.size_t(len(v[0]))}
 			idx++

@@ -9,7 +9,7 @@ version = "0.1.0"
 [[component]]
 id = "preview-compare"
 source = "main.wasm"
-allowed_http_hosts = ["fermyon.com", "fermyon.app"]
+allowed_http_hosts = ["rajatjindal.com", "fermyon.com"]
 [component.trigger]
 route = "/..."
 [component.build]
