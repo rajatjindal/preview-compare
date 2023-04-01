@@ -14,6 +14,10 @@ type PreviewRequest struct {
 }
 
 func (s *Store) CreatePreview(ctx context.Context, req *PreviewRequest) (*PreviewRequest, error) {
-	req.Id = fmt.Sprintf("preq:%s", uuid.New().String())
+	req.Id = fmt.Sprintf("preq-%s", uuid.New().String())
 	return req, s.set(req)
+}
+
+func (s *Store) GetPreview(ctx context.Context, id string) (*PreviewRequest, error) {
+	return s.get(id)
 }

@@ -7,10 +7,12 @@ import (
 
 	spinhttp "github.com/fermyon/spin/sdk/go/http"
 	"github.com/rajatjindal/preview-compare/internal/api"
+	"github.com/rajatjindal/preview-compare/internal/roles"
 )
 
 func init() {
 	spinhttp.Handle(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(os.Stderr, fmt.Sprintf("role=%s url=%s", roles.GetRole(), r.URL.String()))
 		s, err := api.New()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: %v\n", err))
