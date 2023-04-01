@@ -16,38 +16,47 @@ import (
 const ProxyFunctions = `
 	<script>
 	const identifier = '%s';
+	let eventsQueue = [];
+
+	setInterval(function() {
+		// console.log("identifier: ", identifier, " queue length: ", eventsQueue.length);
+		if (eventsQueue.length === 0) {
+			// console.log("no events in scroll queue")
+			return;
+		}
+
+		// const lastEvent = eventsQueue[eventsQueue.length - 1];
+		console.log("updating scrollTop for self:  ", identifier, " for event: ", lastEvent.data);
+		document.documentElement.scrollTo({top: lastEvent.data.scrollTop, behavior: 'smooth'});
+
+		eventsQueue = [];
+		// console.log("identifier: ", identifier, " resetting queue : ", eventsQueue.length);
+	}, 2000)
+
 	console.log('proxying'); 
 	window.addEventListener("message", (event) => {
-		console.log("hello from inside child with self-identifier ", identifier);
-		console.log("self-identifier", identifier, " event: ", event);
-		if (event.data.sender !== identifier && event.data.type === 'scroll') {
+		// console.log("hello from inside child with self-identifier ", identifier);
+		// console.log("self-identifier", identifier, " event.data: ", event.data);
+		if (event.data.sender === identifier) {
+			// console.log("ignore msg from self");
+			return;
+		}
+
+		if (event.data.type === 'scroll') {
 			if (document.documentElement.scrollTop === event.data.scrollTop) {
-				console.log("already updated scrollTop");
+				// console.log("already updated scrollTop");
 				return;
 			}
 
-			console.log("updating scrollTop");
-			document.documentElement.scrollTop=event.data.scrollTop;
+			eventsQueue.push(event)
 		}
 	});
 
 	document.addEventListener("scroll", (event) => {
-		console.log("inside scroll event");
-		console.log("document.documentElement.scrollTop", document.documentElement.scrollTop);
+		// console.log("inside scroll event ", event);
+		// console.log("document.documentElement.scrollTop", document.documentElement.scrollTop);
 		window.parent.postMessage({"sender": identifier, "msg": "hello there from your child", "type": "scroll", "scrollTop": document.documentElement.scrollTop}, "*")
 	});
-
-	console.log(document);
-	console.log('proxied');
-	if (document && document.body) {
-		console.log("inside document.body")
-		document.body.scrollTop=600; 
-	}
-	
-	if (document && document.documentElement) {
-		console.log("inside document.documentElement")
-		document.documentElement.scrollTop=600;
-	}
 
 	</script>
 `

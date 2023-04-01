@@ -55,9 +55,8 @@ func (s *Server) ComparePreviewWithId(w http.ResponseWriter, r *http.Request) {
 	<script>
 		console.log('proxying'); 
 		window.addEventListener("message", (event) => {
-			console.log("hello from inside parent");
-			console.log(event);
-
+			// console.log("hello from inside parent");
+			// console.log(event.data);
 			document.getElementById('frame-id-1').contentWindow.postMessage(event.data, "*");
 			document.getElementById('frame-id-2').contentWindow.postMessage(event.data, "*");
 		});
