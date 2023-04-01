@@ -12,7 +12,7 @@ import (
 
 func init() {
 	spinhttp.Handle(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(os.Stderr, fmt.Sprintf("role=%s url=%s", roles.GetRole(), r.URL.String()))
+		fmt.Fprintf(os.Stderr, fmt.Sprintf("role=%s url=%s\n", roles.GetRole(), r.URL.String()))
 		s, err := api.New()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: %v\n", err))

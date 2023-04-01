@@ -59,10 +59,10 @@ func (s *Server) ComparePreviewWithId(w http.ResponseWriter, r *http.Request) {
 <body>
     <div class="grid grid-cols-2 gap-1 mx-full border-2 border-blue-100 w-1/2 mx-auto my-auto h-1/2 mt-20">
 		<div id="container-1" class="col-span-1 w-full border border-red-900 h-screen">
-			<iframe id="frame-id-1" src="https://preview-1-wpsr7vaf.fermyon.app?base=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
+			<iframe id="frame-id-1" src="https://preview-1-wpsr7vaf.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
 		</div>
 		<div id="container-1" class="col-span-1 w-full border border-red-900 h-screen">
-			<iframe id="frame-id-1" src="https://preview-2-b6p5mwqe.fermyon.app?base=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
+			<iframe id="frame-id-1" src="https://preview-2-b6p5mwqe.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
 		</div>
 	</div>
 
@@ -77,5 +77,5 @@ func (s *Server) ComparePreviewWithId(w http.ResponseWriter, r *http.Request) {
 </html>
 `
 	w.Header().Set("content-type", "text/html")
-	w.Write([]byte(fmt.Sprintf(rawhtml, preview.ThisBase, preview.ThatBase)))
+	w.Write([]byte(fmt.Sprintf(rawhtml, preview.ThisBase, preview.Id, preview.ThatBase, preview.Id)))
 }
