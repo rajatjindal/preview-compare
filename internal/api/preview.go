@@ -52,6 +52,16 @@ func (s *Server) ComparePreviewWithId(w http.ResponseWriter, r *http.Request) {
 <html>
 
 <head>
+	<script>
+		console.log('proxying'); 
+		window.addEventListener("message", (event) => {
+			console.log("hello from inside parent");
+			console.log(event);
+
+			document.getElementById('frame-id-1').contentWindow.postMessage(event.data, "*");
+			document.getElementById('frame-id-2').contentWindow.postMessage(event.data, "*");
+		});
+	</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -63,16 +73,9 @@ func (s *Server) ComparePreviewWithId(w http.ResponseWriter, r *http.Request) {
 			<iframe id="frame-id-1" src="https://preview-1-wpsr7vaf.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
 		</div>
 		<div id="container-1" class="col-span-1 w-full h-screen">
-			<iframe id="frame-id-1" src="https://preview-2-b6p5mwqe.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
+			<iframe id="frame-id-2" src="https://preview-2-b6p5mwqe.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
 		</div>
 	</div>
-
-	<script>
-	// setInterval(function() {
-	// 	document.getElementById('frame-id-1').contentWindow.postMessage("hello there from your parent", "*");
-	// }, 2000);
-	
-	</script>
 </body>
 
 </html>

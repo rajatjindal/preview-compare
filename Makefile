@@ -1,6 +1,6 @@
 .PHONY: deploy
 deploy: 
-	make -j1 build
+	make build
 	make -j3 deploy-only
 
 .PHONY: build

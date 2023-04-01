@@ -1,7 +1,7 @@
 spin_version = "1"
 authors = ["Rajat Jindal <rajatjindal83@gmail.com>"]
 description = "preview url's side by side"
-name = "preview"
+name = "preview-main"
 trigger = { type = "http", base = "/" }
 version = "0.1.0"
 

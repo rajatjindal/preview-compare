@@ -10,27 +10,51 @@ import (
 	"time"
 
 	spinhttp "github.com/fermyon/spin/sdk/go/http"
+	"github.com/google/uuid"
 )
 
-const fns = `
+const ProxyFunctions = `
+	<script>
+	const identifier = '%s';
 	console.log('proxying'); 
 	window.addEventListener("message", (event) => {
-		console.log("hello from child");
-		console.log(event);
+		console.log("hello from inside child with self-identifier ", identifier);
+		console.log("self-identifier", identifier, " event: ", event);
+		if (event.data.sender !== identifier && event.data.type === 'scroll') {
+			if (document.documentElement.scrollTop === event.data.scrollTop) {
+				console.log("already updated scrollTop");
+				return;
+			}
+
+			console.log("updating scrollTop");
+			document.documentElement.scrollTop=event.data.scrollTop;
+		}
 	});
 
+	document.addEventListener("scroll", (event) => {
+		console.log("inside scroll event");
+		console.log("document.documentElement.scrollTop", document.documentElement.scrollTop);
+		window.parent.postMessage({"sender": identifier, "msg": "hello there from your child", "type": "scroll", "scrollTop": document.documentElement.scrollTop}, "*")
+	});
+
+	console.log(document);
 	console.log('proxied');
 	if (document && document.body) {
+		console.log("inside document.body")
 		document.body.scrollTop=600; 
 	}
 	
 	if (document && document.documentElement) {
+		console.log("inside document.documentElement")
 		document.documentElement.scrollTop=600;
 	}
+
+	</script>
 `
 
 func AddPreviewFunctions(input []byte) ([]byte, error) {
-	return []byte(strings.Replace(string(input), "<head>", fmt.Sprintf("<head><script>%s</script>", fns), 1)), nil
+	replaceWith := fmt.Sprintf("<head>%s", fmt.Sprintf(ProxyFunctions, uuid.New().String()))
+	return []byte(strings.Replace(string(input), "<head>", replaceWith, 1)), nil
 }
 
 func ServeHTTP(w http.ResponseWriter, r *http.Request) {
