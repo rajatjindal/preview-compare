@@ -53,11 +53,20 @@ func (s *Server) ComparePreviewWithId(w http.ResponseWriter, r *http.Request) {
 
 <head>
 	<script>
-		console.log('proxying'); 
+		let incomingQueue = [];
+		setInterval(function() {
+			if (incomingQueue.length === 0) {
+				return;
+			}
+
+			const lastEvent = incomingQueue[incomingQueue.length - 1];
+			document.getElementById('frame-id-2').contentWindow.postMessage(lastEvent.data, "*");
+		
+			incomingQueue = [];
+		}, 1000)
+
 		window.addEventListener("message", (event) => {
-			// console.log("hello from inside parent");
-			// console.log(event.data);
-			document.getElementById('frame-id-1').contentWindow.postMessage(event.data, "*");
+			// incomingQueue.push(event)
 			document.getElementById('frame-id-2').contentWindow.postMessage(event.data, "*");
 		});
 	</script>
@@ -68,10 +77,10 @@ func (s *Server) ComparePreviewWithId(w http.ResponseWriter, r *http.Request) {
 
 <body>
     <div class="grid grid-cols-2 gap-1 mx-full border-2 w-full mx-auto my-auto h-screen">
-		<div id="container-1" class="col-span-1 w-full h-screen">
+		<div id="container-1" class="col-span-1 w-full h-screen resize-x">
 			<iframe id="frame-id-1" src="https://preview-1-wpsr7vaf.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
 		</div>
-		<div id="container-1" class="col-span-1 w-full h-screen">
+		<div id="container-1" class="col-span-1 w-full h-screen resize-x">
 			<iframe id="frame-id-2" src="https://preview-2-b6p5mwqe.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
 		</div>
 	</div>

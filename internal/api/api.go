@@ -65,7 +65,7 @@ func (s *Server) addRoutesForPreviewFirst() {
 		w.WriteHeader(http.StatusOK)
 	}).Name("options")
 
-	s.Router.NewRoute().PathPrefix("/").HandlerFunc(s.Proxy).Name("ProxyFirst")
+	s.Router.NewRoute().PathPrefix("/").HandlerFunc(s.ProxyFirst).Name("ProxyFirst")
 }
 
 func (s *Server) addRoutesForPreviewSecond() {
@@ -73,5 +73,5 @@ func (s *Server) addRoutesForPreviewSecond() {
 		w.WriteHeader(http.StatusOK)
 	}).Name("options")
 
-	s.Router.NewRoute().PathPrefix("/").HandlerFunc(s.Proxy).Name("ProxySecond")
+	s.Router.NewRoute().PathPrefix("/").HandlerFunc(s.ProxySecond).Name("ProxySecond")
 }

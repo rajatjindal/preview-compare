@@ -16,57 +16,62 @@ import (
 const ProxyFunctions = `
 	<script>
 	const identifier = '%s';
-	let eventsQueue = [];
+	let incomingQueue = [];
+	let outboundQueue = [];
+	let autoScrolling = false;
 
 	setInterval(function() {
-		// console.log("identifier: ", identifier, " queue length: ", eventsQueue.length);
-		if (eventsQueue.length === 0) {
-			// console.log("no events in scroll queue")
+		if (incomingQueue.length === 0) {
 			return;
 		}
 
-		// const lastEvent = eventsQueue[eventsQueue.length - 1];
-		console.log("updating scrollTop for self:  ", identifier, " for event: ", lastEvent.data);
+		const lastEvent = incomingQueue[incomingQueue.length - 1];		
 		document.documentElement.scrollTo({top: lastEvent.data.scrollTop, behavior: 'smooth'});
 
-		eventsQueue = [];
-		// console.log("identifier: ", identifier, " resetting queue : ", eventsQueue.length);
+		incomingQueue = [];
+	}, 100)
+
+	setInterval(function() {
+		if (outboundQueue.length === 0) {
+			return;
+		}
+
+		const lastEvent = outboundQueue[outboundQueue.length - 1];
+		window.parent.postMessage(lastEvent, "*")
+		outboundQueue = [];
 	}, 2000)
 
-	console.log('proxying'); 
 	window.addEventListener("message", (event) => {
-		// console.log("hello from inside child with self-identifier ", identifier);
-		// console.log("self-identifier", identifier, " event.data: ", event.data);
 		if (event.data.sender === identifier) {
-			// console.log("ignore msg from self");
 			return;
 		}
 
 		if (event.data.type === 'scroll') {
 			if (document.documentElement.scrollTop === event.data.scrollTop) {
-				// console.log("already updated scrollTop");
 				return;
 			}
 
-			eventsQueue.push(event)
+			incomingQueue.push(event)
 		}
 	});
 
-	document.addEventListener("scroll", (event) => {
-		// console.log("inside scroll event ", event);
-		// console.log("document.documentElement.scrollTop", document.documentElement.scrollTop);
-		window.parent.postMessage({"sender": identifier, "msg": "hello there from your child", "type": "scroll", "scrollTop": document.documentElement.scrollTop}, "*")
-	});
+	// if triggerScrollEvent is true, send event on scroll
+	if (%t) {
+		document.addEventListener("scroll", (event) => {
+			window.parent.postMessage({"sender": identifier, "msg": "hello there from your child", "type": "scroll", "scrollTop": document.documentElement.scrollTop}, "*")
+			// outboundQueue.push({"sender": identifier, "msg": "hello there from your child", "type": "scroll", "scrollTop": document.documentElement.scrollTop});
+		});
+	}
 
 	</script>
 `
 
-func AddPreviewFunctions(input []byte) ([]byte, error) {
-	replaceWith := fmt.Sprintf("<head>%s", fmt.Sprintf(ProxyFunctions, uuid.New().String()))
+func AddPreviewFunctions(input []byte, triggerScrollEvent bool) ([]byte, error) {
+	replaceWith := fmt.Sprintf("<head>%s", fmt.Sprintf(ProxyFunctions, uuid.New().String(), triggerScrollEvent))
 	return []byte(strings.Replace(string(input), "<head>", replaceWith, 1)), nil
 }
 
-func ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func ServeHTTP(w http.ResponseWriter, r *http.Request, triggerScrollEvent bool) {
 	previewBase := getPreviewBase(r)
 	original, err := url.Parse(r.URL.String())
 	if err != nil {
@@ -106,7 +111,7 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := AddPreviewFunctions(rawRespBody)
+	d, err := AddPreviewFunctions(rawRespBody, triggerScrollEvent)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
