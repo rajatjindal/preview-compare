@@ -16,6 +16,7 @@ import (
 const ProxyFunctions = `
 	<script>
 	const identifier = '%s';
+	const originalBase = '%s';
 	let incomingQueue = [];
 	let outboundQueue = [];
 	let autoScrolling = false;
@@ -53,21 +54,49 @@ const ProxyFunctions = `
 
 			incomingQueue.push(event)
 		}
+
+		if (event.data.type === 'navigate') {
+			if (window.location.pathname === event.data.navigateTo) {
+				return;
+			}
+
+			window.location.pathname = event.data.navigateTo
+		}
 	});
 
-	// if triggerScrollEvent is true, send event on scroll
+	 // if triggerScrollEvent is true, send event on scroll
 	if (%t) {
 		document.addEventListener("scroll", (event) => {
 			window.parent.postMessage({"sender": identifier, "msg": "hello there from your child", "type": "scroll", "scrollTop": document.documentElement.scrollTop}, "*")
 			// outboundQueue.push({"sender": identifier, "msg": "hello there from your child", "type": "scroll", "scrollTop": document.documentElement.scrollTop});
 		});
-	}
 
+		document.addEventListener('DOMContentLoaded', function() {
+			const allLinks = document.getElementsByTagName('a');
+			allLinks.forEach(item => {
+				console.log("before => ", item.href);
+				console.log("starts with => ", item.href.startsWith("/"));
+				if (item.href.startsWith("/")) {
+					console.log("first if");
+					item.setAttribute('href', 'https://preview-1-wpsr7vaf.fermyon.app' + item.href)
+				}
+	
+				if (item.href.startsWith(originalBase)) {
+					console.log("second if");
+					item.setAttribute('href', item.href.replace(originalBase, 'https://preview-1-wpsr7vaf.fermyon.app'));
+				}
+	
+				console.log("after ", item);
+			});
+
+			window.parent.postMessage({"sender": identifier, "msg": "hello there from your child", "type": "navigate", "navigateTo": window.location.pathname}, "*");
+		}, false);
+	}
 	</script>
 `
 
-func AddPreviewFunctions(input []byte, triggerScrollEvent bool) ([]byte, error) {
-	replaceWith := fmt.Sprintf("<head>%s", fmt.Sprintf(ProxyFunctions, uuid.New().String(), triggerScrollEvent))
+func AddPreviewFunctions(input []byte, previewBase string, triggerScrollEvent bool) ([]byte, error) {
+	replaceWith := fmt.Sprintf("<head>%s", fmt.Sprintf(ProxyFunctions, uuid.New().String(), previewBase, triggerScrollEvent))
 	return []byte(strings.Replace(string(input), "<head>", replaceWith, 1)), nil
 }
 
@@ -111,7 +140,7 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request, triggerScrollEvent bool) 
 		return
 	}
 
-	d, err := AddPreviewFunctions(rawRespBody, triggerScrollEvent)
+	d, err := AddPreviewFunctions(rawRespBody, previewBase, triggerScrollEvent)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
