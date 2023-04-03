@@ -40,14 +40,14 @@ func (s *Server) ComparePreviewWithId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	preview, err := s.store.GetPreview(r.Context(), id)
+	previewReq, err := s.store.GetPreview(r.Context(), id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Fprintf(os.Stderr, fmt.Sprintf("preview: %#v", preview))
-	var rawhtml = `
+	fmt.Fprintf(os.Stderr, fmt.Sprintf("preview: %#v", previewReq))
+	var _ = `
 <!doctype html>
 <html>
 
@@ -88,6 +88,14 @@ func (s *Server) ComparePreviewWithId(w http.ResponseWriter, r *http.Request) {
 
 </html>
 `
+
+	rendered, err := preview.Render(previewReq)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("content-type", "text/html")
-	w.Write([]byte(fmt.Sprintf(rawhtml, preview.ThisBase, preview.Id, preview.ThatBase, preview.Id)))
+	// w.Write([]byte(fmt.Sprintf(rawhtml, previewReq.ThisBase, previewReq.Id, previewReq.ThatBase, previewReq.Id)))
+	w.Write(rendered)
 }

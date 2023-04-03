@@ -7,10 +7,15 @@ import (
 	"github.com/google/uuid"
 )
 
+type Change struct {
+	Link     string `json:"link"`
+	LinkText string `json:"linkText"`
+}
 type PreviewRequest struct {
-	Id       string `json:"id"`
-	ThisBase string `json:"this"`
-	ThatBase string `json:"that"`
+	Id       string   `json:"id"`
+	ThisBase string   `json:"this"`
+	ThatBase string   `json:"that"`
+	Changes  []Change `json:"changes"`
 }
 
 func (s *Store) CreatePreview(ctx context.Context, req *PreviewRequest) (*PreviewRequest, error) {

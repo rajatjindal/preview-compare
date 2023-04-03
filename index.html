@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+
+<head>
+    <script>
+        let incomingQueue = [];
+        setInterval(function () {
+            if (incomingQueue.length === 0) {
+                return;
+            }
+
+            const lastEvent = incomingQueue[incomingQueue.length - 1];
+            document.getElementById('frame-id-2').contentWindow.postMessage(lastEvent.data, "*");
+
+            incomingQueue = [];
+        }, 1000)
+
+        window.addEventListener("message", (event) => {
+            // incomingQueue.push(event)
+            document.getElementById('frame-id-2').contentWindow.postMessage(event.data, "*");
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        function toggleLeftNav() {
+            console.log('toggleLeftNav');
+            document.getElementById('leftNav').classList.toggle('hidden');
+            document.getElementById('bodyGrid').classList.toggle('w-10/12');
+            document.getElementById('bodyGrid').classList.toggle('w-full');
+        }
+
+        function linkClick(link) {
+            console.log('linkClick ', link);
+            toggleLeftNav();
+        }
+
+        const BORDER_SIZE = 4;
+        const panel = document.getElementById("container-2");
+
+        let m_pos;
+        function resize(e) {
+            console.log("inside resize")
+            const dx = m_pos - e.x;
+            m_pos = e.x;
+            panel.style.width = (parseInt(getComputedStyle(panel, '').width) + dx) + "px";
+        }
+
+        panel.addEventListener("mousedown", function (e) {
+            console.log("inside mousedown")
+            if (e.offsetX < BORDER_SIZE) {
+                m_pos = e.x;
+                document.addEventListener("mousemove", resize, false);
+            }
+        }, false);
+
+        document.addEventListener("mouseup", function () {
+            console.log("inside mouseup")
+            document.removeEventListener("mousemove", resize, false);
+        }, false);
+    </script>
+
+
+</head>
+
+<body>
+    <div class="h-12 py-3 bg-gray-900">
+        <div class="my-auto text-indigo-400 flex" onclick="toggleLeftNav()">
+            <div class="ml-2">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M4.75 5.75H19.25"></path>
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M4.75 18.25H19.25"></path>
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M4.75 12H19.25"></path>
+                </svg>
+            </div>
+            <div class="ml-2 -mt-0.5 text-xl text-indigo-400 font-bold">Preview App</div>
+        </div>
+    </div>
+
+    <div class="mx-full w-full mx-auto my-auto h-screen flex">
+        <div id="leftNav" class="w-2/12 z-10 hidden col-span-1 flex-cols bg-gray-900 text-white text-xs">
+        </div>
+        <div id="bodyGrid" class="w-full grid grid-cols-8 gap-1">
+            <div id="container-1" class="col-span-4 w-full h-screen resize-x border-r-2 border-gray-600">
+                <iframe id="frame-id-1"
+                    src="https://preview-1-wpsr7vaf.fermyon.app?previewBase=https://www.fermyon.com&previewId=preq-db59a291-f1c6-48c1-9360-c0ce85530046"
+                    frameborder="0" style="width: 100%; height: 100%;"></iframe>
+            </div>
+            <div id="container-1" class="col-span-4 w-full h-screen resize-x border-l-2 border-gray-600">
+                <iframe id="frame-id-2"
+                    src="https://preview-2-b6p5mwqe.fermyon.app?previewBase=https://fermyon-www-pr-622-fauapwcz.fermyon.app&previewId=preq-db59a291-f1c6-48c1-9360-c0ce85530046"
+                    frameborder="0" style="width: 100%; height: 100%;"></iframe>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

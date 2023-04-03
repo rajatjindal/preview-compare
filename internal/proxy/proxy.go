@@ -76,6 +76,10 @@ const ProxyFunctions = `
 			allLinks.forEach(item => {
 				console.log("before => ", item.href);
 				console.log("starts with => ", item.href.startsWith("/"));
+				if (item.href.startsWith("https://preview-1-wpsr7vaf.fermyon.app")) {
+					item.setAttribute('href', item.href.replace('https://preview-1-wpsr7vaf.fermyon.app', 'https://preview-1-wpsr7vaf.fermyon.app'));
+				}
+
 				if (item.href.startsWith("/")) {
 					console.log("first if");
 					item.setAttribute('href', 'https://preview-1-wpsr7vaf.fermyon.app' + item.href)
