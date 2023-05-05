@@ -86,10 +86,10 @@ var rawTemplate2 = `
 		</div>
 		<div id="bodyGrid" class="w-full grid grid-cols-8 gap-1">
 			<div id="container-1" class="col-span-4 w-full h-screen resize-x">
-				<iframe id="frame-id-1" src="https://preview-1-wpsr7vaf.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
+				<iframe id="frame-id-1" src="https://preview-1.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
 			</div>
 			<div id="container-1" class="col-span-4 w-full h-screen resize-x">
-				<iframe id="frame-id-2" src="https://preview-2-b6p5mwqe.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
+				<iframe id="frame-id-2" src="https://preview-2.fermyon.app?previewBase=%s&previewId=%s" frameborder="0" style="width: 100%%; height: 100%%;"></iframe>
 			</div>
 		</div>
 	</div>

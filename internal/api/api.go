@@ -52,6 +52,7 @@ func (s *Server) addRoutesForPreviewMain() {
 
 	s.Router.NewRoute().Methods(http.MethodPost).Path("/api/preview").HandlerFunc(s.CreateNewPreviewRequest).Name("CreateNewPreviewRequest")
 	s.Router.NewRoute().Methods(http.MethodGet).Path("/api/preview/{id:preq-" + uuidRegex + "}").HandlerFunc(s.ComparePreviewWithId).Name("ComparePreviewWithId")
+	s.Router.NewRoute().Methods(http.MethodGet).Path("/preview").HandlerFunc(s.ComparePreview).Name("ComparePreview")
 
 	cors := handlers.CORS(
 		handlers.AllowedHeaders([]string{"authorization", "content-type"}),
